@@ -38,3 +38,27 @@ BEGIN
 
 END
 GO
+
+CREATE PROCEDURE BorrarRolUsuario
+    @Email VARCHAR(100),
+    @IdRol INT
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+	BEGIN TRANSACTION;
+
+		-- Validar que la combinación email - idRol exista
+        IF NOT EXISTS (SELECT 1 FROM rol_usuario WHERE fkemail = @Email AND fkidrol = @IdRol)
+        BEGIN
+			SELECT 0 AS 'estado', 'Este usuario no cuenta con este rol.' AS 'resultado';
+            ROLLBACK;
+            RETURN;
+        END
+
+	    DELETE FROM rol_usuario WHERE fkemail = @Email AND fkidrol = @IdRol
+		SELECT 1 AS 'estado', 'Registro eliminado exitosamente.' AS 'resultado';
+
+	COMMIT;
+END
+GO
