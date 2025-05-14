@@ -62,6 +62,32 @@ BEGIN
 	COMMIT;
 END
 GO
+
+CREATE PROCEDURE RolPorUsuario
+    @Email VARCHAR(100)
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+	BEGIN TRANSACTION;
+
+	    -- Validar existencia del usuario
+        IF NOT EXISTS (SELECT 1 FROM usuario WHERE email = @Email)
+        BEGIN
+            SELECT 'El usuario proporcionado no existe.' AS 'mensaje';
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+		SELECT dbo.rol.nombre AS nombreRol, dbo.rol.id AS idRol
+		FROM     dbo.rol_usuario INNER JOIN
+                  dbo.rol ON dbo.rol_usuario.fkidrol = dbo.rol.id INNER JOIN
+                  dbo.usuario ON dbo.rol_usuario.fkemail = dbo.usuario.email
+		WHERE dbo.rol_usuario.fkemail = @Email
+
+	COMMIT;
+END
+GO
 --Procedimiento almacenado para llenar la tabla intermedia represenvisualporindicador
 CREATE PROCEDURE ModificarRepresentacionVisualPorIndicador
     @fkidindicador INT,
