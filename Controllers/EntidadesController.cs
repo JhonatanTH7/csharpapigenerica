@@ -744,7 +744,7 @@ namespace csharpapigenerica.Controllers
 [HttpPost("ejecutar-sp")]
 public IActionResult EjecutarProcedimientoAlmacenado(
     string nombreProyecto, 
-    string nombreTabla, 
+    string nombreTabla,     
     [FromBody] Dictionary<string, object> parametrosSP)
 {
     if (parametrosSP == null || !parametrosSP.ContainsKey("nombreSP"))

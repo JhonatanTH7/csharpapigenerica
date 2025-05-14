@@ -24,7 +24,7 @@ BEGIN
             RETURN;
         END
 
-		-- Validar que la combinación email - idRol no exista ya
+		-- Validar que la combinaciï¿½n email - idRol no exista ya
         IF EXISTS (SELECT 1 FROM rol_usuario WHERE fkemail = @Email AND fkidrol = @IdRol)
         BEGIN
              SELECT 0 AS 'estado', 'Este usuario ya tiene este rol.' AS 'resultado';
@@ -48,7 +48,7 @@ BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRANSACTION;
 
-		-- Validar que la combinación email - idRol exista
+		-- Validar que la combinaciï¿½n email - idRol exista
         IF NOT EXISTS (SELECT 1 FROM rol_usuario WHERE fkemail = @Email AND fkidrol = @IdRol)
         BEGIN
 			SELECT 0 AS 'estado', 'Este usuario no cuenta con este rol.' AS 'resultado';
@@ -62,3 +62,24 @@ BEGIN
 	COMMIT;
 END
 GO
+--Procedimiento almacenado para llenar la tabla intermedia represenvisualporindicador
+CREATE PROCEDURE ModificarRepresentacionVisualPorIndicador
+    @fkidindicador INT,
+    @fkrepresentacionvisual INT,
+	@newIdIndicador INT = Null,
+	@newIdRepresentacionVisual INT = Null
+AS
+	BEGIN TRANSACTION
+		BEGIN TRY
+			UPDATE represenvisualporindicador
+			SET fkidindicador = @newIdIndicador, fkidrepresenvisual = @newIdRepresentacionVisual
+			WHERE fkidindicador = @fkidindicador AND fkidrepresenvisual = @fkrepresentacionvisual;
+			SELECT 1 AS 'Status','Se actualizo la tabla' AS 'Respuesta'
+	COMMIT TRANSACTION
+		END TRY
+		BEGIN CATCH
+			DECLARE @ErrorMessage NVARCHAR(4000);
+			SET @ErrorMessage = ERROR_MESSAGE();
+			SELECT 0 AS 'Status', @ErrorMessage AS 'Respuesta'
+	ROLLBACK TRANSACTION
+	END CATCH
