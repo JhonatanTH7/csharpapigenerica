@@ -88,19 +88,17 @@ BEGIN
 	COMMIT;
 END
 GO
---Procedimiento almacenado para llenar la tabla intermedia represenvisualporindicador
-CREATE PROCEDURE ModificarRepresentacionVisualPorIndicador
+
+--Procedimiento almacenado para BORRAR la tabla intermedia represenvisualporindicador
+CREATE PROCEDURE BorrarRepresentacionVisualPorIndicador
     @fkidindicador INT,
-    @fkrepresentacionvisual INT,
-	@newIdIndicador INT = Null,
-	@newIdRepresentacionVisual INT = Null
+    @fkrepresentacionvisual INT
 AS
 	BEGIN TRANSACTION
 		BEGIN TRY
-			UPDATE represenvisualporindicador
-			SET fkidindicador = @newIdIndicador, fkidrepresenvisual = @newIdRepresentacionVisual
+			DELETE FROM represenvisualporindicador
 			WHERE fkidindicador = @fkidindicador AND fkidrepresenvisual = @fkrepresentacionvisual;
-			SELECT 1 AS 'Status','Se actualizo la tabla' AS 'Respuesta'
+			SELECT 1 AS 'Status','Se borro en tabla: RepresentacionVisualPorIndicador' AS 'Respuesta'
 	COMMIT TRANSACTION
 		END TRY
 		BEGIN CATCH
@@ -109,3 +107,62 @@ AS
 			SELECT 0 AS 'Status', @ErrorMessage AS 'Respuesta'
 	ROLLBACK TRANSACTION
 	END CATCH
+
+GO 
+--Procedimiento almacenado para AGREGAR la tabla intermedia represenvisualporindicador
+CREATE PROCEDURE AgregarRepresentacionVisualPorIndicador
+    @fkidindicador INT,
+    @fkrepresentacionvisual INT
+AS
+	BEGIN TRANSACTION
+		BEGIN TRY
+			INSERT INTO represenvisualporindicador
+			VALUES (@fkidindicador,@fkrepresentacionvisual);
+			SELECT 1 AS 'Status','Ingreso el dato' AS 'Respuesta'
+	COMMIT TRANSACTION
+		END TRY
+		BEGIN CATCH
+			DECLARE @ErrorMessage NVARCHAR(4000);
+			SET @ErrorMessage = ERROR_MESSAGE();
+			SELECT 0 AS 'Status', @ErrorMessage AS 'Respuesta'
+	ROLLBACK TRANSACTION
+	END CATCH
+GO
+--Procedimiento almacenado para BORRAR la tabla intermedia ResponsablesPorIndicador
+CREATE PROCEDURE BorrarResponsablesPorIndicador
+    @fkidresponsable VARCHAR(50),
+    @fkidindicador INT
+AS
+	BEGIN TRANSACTION
+		BEGIN TRY
+			DELETE FROM responsablesporindicador
+			WHERE fkidresponsable = @fkidresponsable AND fkidindicador = @fkidindicador;
+			SELECT 1 AS 'Status','Se borro en tabla: ResponsablesPorIndicador' AS 'Respuesta'
+	COMMIT TRANSACTION
+		END TRY
+		BEGIN CATCH
+			DECLARE @ErrorMessage NVARCHAR(4000);
+			SET @ErrorMessage = ERROR_MESSAGE();
+			SELECT 0 AS 'Status', @ErrorMessage AS 'Respuesta'
+	ROLLBACK TRANSACTION
+	END CATCH
+GO
+--Procedimiento almacenado para AGREGAR la tabla intermedia ResponsablesPorIndicador
+CREATE PROCEDURE AgregarResponsablesPorIndicador
+    @fkidresponsable VARCHAR(50),
+    @fkidindicador INT
+AS
+	BEGIN TRANSACTION
+		BEGIN TRY
+			INSERT INTO responsablesporindicador
+			VALUES (@fkidresponsable,@fkidindicador,GETDATE());
+			SELECT 1 AS 'Status','Se Ingreso en tabla ResponsablesPorIndicador' AS 'Respuesta'
+	COMMIT TRANSACTION
+		END TRY
+		BEGIN CATCH
+			DECLARE @ErrorMessage NVARCHAR(4000);
+			SET @ErrorMessage = ERROR_MESSAGE();
+			SELECT 0 AS 'Status', @ErrorMessage AS 'Respuesta'
+	ROLLBACK TRANSACTION
+	END CATCH
+GO
