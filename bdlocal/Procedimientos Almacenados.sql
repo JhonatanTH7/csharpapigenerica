@@ -166,3 +166,64 @@ AS
 	ROLLBACK TRANSACTION
 	END CATCH
 GO
+--Procedimiento almacenado para BORRAR la tabla intermedia ACTOR
+CREATE PROCEDURE Borraractor
+    @id VARCHAR(50)
+AS
+	BEGIN TRANSACTION
+		BEGIN TRY
+			DELETE FROM actor
+			WHERE id = @id;
+			SELECT 1 AS 'Status','Se borro en tabla: ACTOR' AS 'Respuesta'
+	COMMIT TRANSACTION
+		END TRY
+		BEGIN CATCH
+			DECLARE @ErrorMessage NVARCHAR(4000);
+			SET @ErrorMessage = ERROR_MESSAGE();
+			SELECT 0 AS 'Status', @ErrorMessage AS 'Respuesta'
+	ROLLBACK TRANSACTION
+	END CATCH
+GO
+--Procedimiento almacenado para AGREGAR la tabla intermedia ResponsablesPorIndicador
+CREATE PROCEDURE AgregarActor
+    @id VARCHAR(50),
+	@nombre varchar(200),
+	@fkidtipoactor int
+AS
+	BEGIN TRANSACTION
+		BEGIN TRY
+			INSERT INTO responsablesporindicador
+			VALUES (@id,@nombre,@fkidtipoactor);
+			SELECT 1 AS 'Status','Se Ingresaron los datos en la tabla: ACTOR exitosamente' AS 'Respuesta'
+	COMMIT TRANSACTION
+		END TRY
+		BEGIN CATCH
+			DECLARE @ErrorMessage NVARCHAR(4000);
+			SET @ErrorMessage = ERROR_MESSAGE();
+			SELECT 0 AS 'Status', @ErrorMessage AS 'Respuesta'
+	ROLLBACK TRANSACTION
+	END CATCH
+GO
+--Procedimiento almacenado para AGREGAR la tabla intermedia ResponsablesPorIndicador
+CREATE PROCEDURE AgregarVariablesporIndicador
+	@id INT,
+	@fkidvariable int,
+	@fkidindicador int,
+	@dato float,
+	@fkemailusuario varchar(100),
+	@fechadato datetime
+
+AS
+	BEGIN TRANSACTION
+		BEGIN TRY
+			INSERT INTO VariablesporIndicador
+			VALUES (@fkidvariable,@fkidindicador,@dato,@fkemailusuario,@fechadato);
+			SELECT 1 AS 'Status','Se Ingreso en tabla:  FuentesPorIndicador' AS 'Respuesta'
+	COMMIT TRANSACTION
+		END TRY
+		BEGIN CATCH
+			DECLARE @ErrorMessage NVARCHAR(4000);
+			SET @ErrorMessage = ERROR_MESSAGE();
+			SELECT 0 AS 'Status', @ErrorMessage AS 'Respuesta'
+	ROLLBACK TRANSACTION
+	END CATCH
